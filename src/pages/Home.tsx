@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { io } from "socket.io-client";
 import {
   Upload,
   Download,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import debounce from "lodash.debounce";
+import JSZip from "jszip";
 
 interface User {
   id: string;
@@ -35,7 +37,40 @@ interface FileTransfer {
   downloaded: boolean;
   filePath?: string;
 }
+const socket = io(import.meta.env.VITE_API_URL || "http://localhost:5000", {
+  withCredentials: true,
+});
 
+const handleDownloadBoth = async (transfer: any) => {
+  try {
+    // Fetch both files as blobs
+    const [fileRes, keyRes] = await Promise.all([
+      fetch(transfer.encryptedFileUrl),
+      fetch(transfer.encryptedKeyUrl),
+    ]);
+    const fileBlob = await fileRes.blob();
+    const keyBlob = await keyRes.blob();
+
+    // Create a zip file
+    const zip = new JSZip();
+    zip.file(transfer.fileName, fileBlob);
+    zip.file("encrypted-key.bin", keyBlob);
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+
+    // Trigger download
+    const url = window.URL.createObjectURL(zipBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${transfer.fileName.replace(/\.[^/.]+$/, "")}_bundle.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    alert("Failed to download files");
+  }
+};
 const Home: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"send" | "receive">("send");
@@ -75,6 +110,28 @@ const Home: React.FC = () => {
       setError("Failed to retrieve sent files");
     }
   };
+  useEffect(() => {
+    if (user?.email) {
+      // Join the user's personal room
+      socket.emit("join", user.email);
+
+      // Listen for new file notifications
+      socket.on("new-file", (fileInfo) => {
+        fetchReceivedFiles(); // Refresh the inbox
+        setSuccess(`New file received: ${fileInfo.fileName}`);
+        setTimeout(() => setSuccess(null), 5000);
+      });
+    }
+
+    // Cleanup on unmount or user change
+    return () => {
+      if (user?.email) {
+        socket.off("new-file");
+        socket.emit("leave", user.email);
+      }
+    };
+    // eslint-disable-next-line
+  }, [user?.email]);
 
   // Fetch received files when the component mounts or user email changes
   useEffect(() => {
@@ -478,20 +535,41 @@ const Home: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {new Date(transfer.createdAt).toLocaleDateString()}
                           </td>
+
+                          {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                              onClick={async () => {
+                                try {
+                                  const res = await fetch(
+                                    transfer.encryptedFileUrl
+                                  );
+                                  const blob = await res.blob();
+                                  const url = window.URL.createObjectURL(blob);
+                                  const a = document.createElement("a");
+                                  a.href = url;
+                                  a.download = transfer.fileName;
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  a.remove();
+                                  window.URL.revokeObjectURL(url);
+                                } catch (err) {
+                                  alert("Failed to download file");
+                                }
+                              }}
+                            >
+                              <Download className="h-4 w-4 mr-1" />
+                              <span>Download</span>
+                            </button>
+                          </td> */}
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            {transfer.filePath ? (
-                              <a
-                                href={transfer.filePath}
-                                className="text-indigo-600 hover:text-indigo-900 flex items-center"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <Download className="h-4 w-4 mr-1" />
-                                <span>Download</span>
-                              </a>
-                            ) : (
-                              <span className="text-gray-400">No file</span>
-                            )}
+                            <button
+                              className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                              onClick={() => handleDownloadBoth(transfer)}
+                            >
+                              <Download className="h-4 w-4 mr-1" />
+                              <span>Download</span>
+                            </button>
                           </td>
                         </tr>
                       ))}
