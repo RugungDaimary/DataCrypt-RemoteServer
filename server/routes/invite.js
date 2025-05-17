@@ -4,7 +4,7 @@ import { sendEmail } from "../utils/email.js";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { email } = req.body;
+  const { email, senderName } = req.body;
   if (!email) return res.status(400).json({ message: "Email is required" });
 
   // You can add domain validation here if needed
@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
             <p style="font-size: 1.1rem; color: #374151;">
               Hello,
               <br /><br />
-              Someone wants to securely share files with you using our platform.<br />
+              ${(senderName || "Someone")} wants to securely share files with you using our platform.<br />
               <b>To receive files, you need to create an account.</b>
             </p>
             <div style="text-align: center; margin: 32px 0;">

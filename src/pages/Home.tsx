@@ -281,7 +281,7 @@ const Home: React.FC = () => {
   const handleSendInvitation = async () => {
     try {
       setLoading(true);
-      await axios.post("/api/invite", { email: recipientEmail });
+      await axios.post("/api/invite", { email: recipientEmail, senderName: user?.name });
       setSuccess("Invitation sent!");
     } catch (err) {
       setError("Failed to send invitation.");
