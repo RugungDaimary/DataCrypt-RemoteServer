@@ -9,6 +9,8 @@ import { Server as SocketIOServer } from "socket.io";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import transferRoutes from "./routes/transfers.js";
+import inviteRoutes from "./routes/invite.js";
+
 
 // Load environment variables
 dotenv.config();
@@ -55,6 +57,7 @@ app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
+app.use("/api/invite", inviteRoutes);
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

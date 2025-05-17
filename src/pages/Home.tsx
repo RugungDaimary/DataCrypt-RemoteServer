@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import debounce from "lodash.debounce";
 import JSZip from "jszip";
+import { useMediaQuery } from 'react-responsive';
 
 interface User {
   id: string;
@@ -87,6 +88,7 @@ const Home: React.FC = () => {
   const [receivedFiles, setReceivedFiles] = useState<FileTransfer[]>([]);
   const encryptedFileInputRef = useRef<HTMLInputElement>(null);
   const aesKeyInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useMediaQuery({ maxWidth: 600 });
 
   // Fetch received files for the logged-in user
   const fetchReceivedFiles = async () => {
@@ -269,6 +271,25 @@ const Home: React.FC = () => {
     setTimeout(() => setSuccess(null), 3000);
   };
 
+  function isValidDomain(email: string) {
+    // Example: allow only gmail.com and company.com
+    const allowedDomains = ["gmail.com", "outlook.com", "yahoo.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "zoho.com", "yandex.com", "outlook.com", "yahoo.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "zoho.com", "yandex.com"];
+    const match = email.match(/@([\w.-]+)$/);
+    return match ? allowedDomains.includes(match[1]) : false;
+  }
+
+  const handleSendInvitation = async () => {
+    try {
+      setLoading(true);
+      await axios.post("/api/invite", { email: recipientEmail });
+      setSuccess("Invitation sent!");
+    } catch (err) {
+      setError("Failed to send invitation.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
       <div className="flex border-b border-gray-200">
@@ -322,8 +343,16 @@ const Home: React.FC = () => {
                 {userFound === true && (
                   <p className="text-sm text-green-600 mt-2">User found!</p>
                 )}
-                {userFound === false && (
-                  <p className="text-sm text-red-600 mt-2">User not found!</p>
+                {userFound === false && isValidDomain(recipientEmail) && (
+                  <div className="mt-2">
+                    <button
+                      onClick={handleSendInvitation}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                      disabled={loading}
+                    >
+                      {loading ? "Sending..." : "Send Invitation for Sign Up"}
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -596,6 +625,9 @@ const Home: React.FC = () => {
             <span>{error}</span>
           </div>
         )}
+      </div>
+      <div className={`custom-mobile-style ${isMobile ? "" : "hidden"}`}>
+        Custom mobile style!
       </div>
     </div>
   );
