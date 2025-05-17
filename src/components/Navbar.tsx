@@ -69,14 +69,14 @@ const Navbar: React.FC = () => {
               <>
                 <Link
                   to="/signin"
-                  className="flex items-center space-x-1 hover:text-indigo-200 transition-colors"
+                  className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors"
                 >
                   <LogIn className="h-5 w-5" />
                   <span>Sign In</span>
                 </Link>
                 <Link
                   to="/signup"
-                  className="flex items-center space-x-1 bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-md transition-colors"
+                  className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors"
                 >
                   <UserPlus className="h-5 w-5" />
                   <span>Sign Up</span>
@@ -108,7 +108,7 @@ const Navbar: React.FC = () => {
                   <Link
                     to="/signin"
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center space-x-1 hover:text-indigo-200 transition-colors px-4 py-2 w-full justify-center"
+                    className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors w-full justify-center"
                   >
                     <LogIn className="h-5 w-5" />
                     <span>Sign In</span>
@@ -116,7 +116,7 @@ const Navbar: React.FC = () => {
                   <Link
                     to="/signup"
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center space-x-1 bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-md transition-colors w-full justify-center"
+                    className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition-colors w-full justify-center"
                   >
                     <UserPlus className="h-5 w-5" />
                     <span>Sign Up</span>
