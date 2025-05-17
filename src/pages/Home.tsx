@@ -626,9 +626,7 @@ const Home: React.FC = () => {
           </div>
         )}
       </div>
-      <div className={`custom-mobile-style ${isMobile ? "" : "hidden"}`}>
-        Custom mobile style!
-      </div>
+      
     </div>
   );
 };
