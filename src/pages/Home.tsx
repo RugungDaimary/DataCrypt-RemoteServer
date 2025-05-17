@@ -273,7 +273,7 @@ const Home: React.FC = () => {
 
   function isValidDomain(email: string) {
     // Example: allow only gmail.com and company.com
-    const allowedDomains = ["gmail.com", "outlook.com", "yahoo.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "zoho.com", "yandex.com", "outlook.com", "yahoo.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "zoho.com", "yandex.com"];
+    const allowedDomains = ["dtu.ac.in","gmail.com", "outlook.com", "yahoo.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "zoho.com", "yandex.com", "outlook.com", "yahoo.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "zoho.com", "yandex.com"];
     const match = email.match(/@([\w.-]+)$/);
     return match ? allowedDomains.includes(match[1]) : false;
   }

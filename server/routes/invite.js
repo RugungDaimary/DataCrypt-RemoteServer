@@ -34,13 +34,7 @@ router.post("/", async (req, res) => {
 
 
 
-            //replace with the actual url
-            //    <a href="https://your-app-url.com/signup" style="background: #4f46e5; color: #fff; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-size: 1.1rem; font-weight: bold; box-shadow: 0 2px 4px #0002;">
-            //     Create Your Account
-            //   </a>
-
-
-
+        
             </div>
             <p style="color: #6b7280; font-size: 0.95rem;">
               If you did not expect this invitation, you can safely ignore this email.
