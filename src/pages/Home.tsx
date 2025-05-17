@@ -21,7 +21,8 @@ interface User {
 }
 
 interface FileTransfer {
-  id: string;
+  _id?: string;
+  id?: string;
   fileName: string;
   fileSize: number;
   sender: {
@@ -100,6 +101,7 @@ const Home: React.FC = () => {
 
   // Optionally, fetch sent files if you want to keep that functionality
   const fetchSentFiles = async () => {
+    if (!user?.email) return;
     try {
       const response = await axios.get("/api/transfers/sent", {
         params: { email: user.email },
@@ -515,7 +517,7 @@ const Home: React.FC = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {receivedFiles.map((transfer) => (
-                        <tr key={transfer.id}>
+                        <tr key={transfer._id || transfer.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900">
                               {transfer.fileName}
