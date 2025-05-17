@@ -168,8 +168,8 @@ const SignUp: React.FC = () => {
                     id="publicKey"
                     value={publicKey}
                     onChange={(e) => setPublicKey(e.target.value)}
-                    rows={3}
-                    className="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md pl-3"
+                    rows={2}
+                    className="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md pl-3 pt-2"
                     placeholder="Paste your public key here"
                   />
                 </div>
